@@ -1,8 +1,16 @@
-import React from "react";
+import React from 'react';
+
+import IssueFilter from './components/IssueFilter';
+import IssueAdd from './components/IssueAdd';
+import IssueTable from './components/IssueTable';
 
 export default () => (
-  <>
-    <h1>Welcome to React Parcel Micro App!</h1>
-    <p>Hard to get more minimal than this React app.</p>
-  </>
+  <div>
+    <h1>Inventory Table</h1>
+    <IssueFilter />
+    <hr />
+    <IssueTable />
+    <hr />
+    <IssueAdd />
+  </div>
 );
