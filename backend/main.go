@@ -7,16 +7,19 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/globalsign/mgo/bson"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
 
 // Item struct
 type Item struct {
-	ID      bson.ObjectId `bson:"_id,omitempty" json:"id"`
-	Title   string        `bson:"title" json:"title"`
-	Content string        `bson:"content" json:"content"`
+	ID             int    `json:"id"`
+	Status         string `json:"status"`
+	Owner          string `json:"owner"`
+	Created        string `json:"created"`
+	Effort         string `json:"effort"`
+	CompletionDate string `json:"completiondate"`
+	Title          string `json:"title"`
 }
 
 func getAllItems(w http.ResponseWriter, r *http.Request) {
@@ -40,7 +43,7 @@ func getItem(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	db, err := sql.Open("Itemgres", "Itemgresql://leader@locahost:26257/inventory?sslmode=disable")
+	db, err := sql.Open("postgres", "postgresql://leader@locahost:26257/inventory?sslmode=disable")
 	if err != nil {
 		log.Fatal("Error connecting to the database: ", err)
 	}
