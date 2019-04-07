@@ -1,67 +1,51 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 
-	"github.com/gorilla/handlers"
-	"github.com/gorilla/mux"
+	"./cockroach"
+	"./gql"
+	"./server"
+	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/middleware"
+	"github.com/go-chi/render"
+	"github.com/graphql-go/graphql"
 )
 
-// Item struct
-type Item struct {
-	ID             int    `json:"id"`
-	Status         string `json:"status"`
-	Owner          string `json:"owner"`
-	Created        string `json:"created"`
-	Effort         string `json:"effort"`
-	CompletionDate string `json:"completiondate"`
-	Title          string `json:"title"`
-}
-
-func getAllItems(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Not yet implemented getAllItems")
-}
-
-func createItem(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Not yet implemented createItem")
-}
-
-func updateItem(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Not yet implemented updateItem")
-}
-
-func deleteItem(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Not yet implemented deleteItem")
-}
-
-func getItem(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Not yet implemented getItem")
-}
-
 func main() {
-	db, err := sql.Open("postgres", "postgresql://leader@locahost:26257/inventory?sslmode=disable")
-	if err != nil {
-		log.Fatal("Error connecting to the database: ", err)
-	}
-	fmt.Println("[Connected] to CockroachDB")
-
+	router, db := initializeAPI()
 	defer db.Close()
 
-	originsOk := handlers.AllowedOrigins([]string{"*"})
-	headersOk := handlers.AllowedHeaders([]string{"Origin", "X-Requested-With", "Content-Type", "Accept"})
-	methodsOk := handlers.AllowedMethods([]string{"GET", "Item", "PUT", "DELETE", "OPTIONS"})
+	log.Fatal(http.ListenAndServe(":4000", router))
+}
 
-	r := mux.NewRouter()
-	r.HandleFunc("/api/item", getAllItems).Methods("GET")
-	r.HandleFunc("/api/item", createItem).Methods("POST")
-	r.HandleFunc("/api/item/{id}", updateItem).Methods("PUT")
-	r.HandleFunc("/api/item/{id}", deleteItem).Methods("DELETE")
-	r.HandleFunc("/api/item/{id}", getItem).Methods("GET")
+func initializeAPI() (*chi.Mux, *cockroach.Db) {
+	router := chi.NewRouter()
+	db, err := cockroach.New(cockroach.ConnString("leader", "localhost", 26257, "users"))
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	fmt.Println("Server running on localhost:3000")
-	http.ListenAndServe(":3000", handlers.LoggingHandler(os.Stdout, handlers.CORS(originsOk, headersOk, methodsOk)(r)))
+	rootQuery := gql.NewRoot(db)
+	sc, err := graphql.NewSchema(
+		graphql.SchemaConfig{Query: rootQuery.Query},
+	)
+	if err != nil {
+		fmt.Println("Error creating schema: ", err)
+	}
+
+	s := server.Server{GqlSchema: &sc}
+
+	router.Use(
+		render.SetContentType(render.ContentTypeJSON),
+		middleware.Logger,
+		middleware.DefaultCompress,
+		middleware.StripSlashes,
+		middleware.Recoverer,
+	)
+
+	router.Post("/graphql", s.GraphQL())
+	return router, db
 }
