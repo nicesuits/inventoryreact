@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const OwnerSchema = new Schema({
+const ownerSchema = new Schema({
   owner: String
 });
 
-module.exports = mongoose.model('Owner', OwnerSchema);
+module.exports = mongoose.model('Owner', ownerSchema);
