@@ -3,40 +3,75 @@ const {
   GraphQLObjectType,
   GraphQLString,
   GraphQLList,
+  GraphQLInt,
   GraphQLID
 } = require('graphql');
-const issueType = require('./graphql/issueType');
-const ownerType = require('./graphql/ownerType');
-const Issue = require('./models/issue');
-const Owner = require('./models/owner');
+
+// const issueType = require('./issueType');
+// const ownerType = require('./ownerType');
+const Issue = require('../models/issue');
+const Owner = require('../models/owner');
+
+const IssueType = new GraphQLObjectType({
+  name: 'Issue',
+  fields: () => ({
+    id: { type: GraphQLID },
+    status: { type: GraphQLString },
+    owner: {
+      type: OwnerType,
+      resolve(parent, args) {
+        // return_.find(authors, { id: parent.authorId})
+        return 'hello world';
+      }
+    },
+    created: { type: GraphQLString },
+    effort: { type: GraphQLInt },
+    completionDate: { type: GraphQLString },
+    title: { type: GraphQLString }
+  })
+});
+
+const OwnerType = new GraphQLObjectType({
+  name: 'Owner',
+  fields: () => ({
+    id: { type: GraphQLID },
+    name: { type: GraphQLString },
+    issues: {
+      type: new GraphQLList(IssueType),
+      resolve(parent, args) {
+        return 'hello world';
+      }
+    }
+  })
+});
 
 const RootQuery = new GraphQLObjectType({
   name: 'RootQueryType',
   fields: {
     issue: {
-      type: issueType,
+      type: IssueType,
       args: { id: { type: GraphQLString } },
       resolve(parent, args) {
         return Issue.findById(args.id);
       }
     },
     owner: {
-      type: ownerType,
+      type: OwnerType,
       args: { id: { type: GraphQLString } },
       resolve(parent, args) {
         return Owner.findById(args.id);
       }
     },
     issues: {
-      type: new GraphQLList(issueType),
+      type: new GraphQLList(IssueType),
       resolve(parent, args) {
-        // return issues
+        return Issue.find({});
       }
     },
     owners: {
-      type: new GraphQLList(ownerType),
+      type: new GraphQLList(OwnerType),
       resolve(parent, args) {
-        // return owners
+        return Owner.find({});
       }
     }
   }
@@ -46,7 +81,7 @@ const RootMutation = new GraphQLObjectType({
   name: 'RootMutationType',
   fields: {
     addIssue: {
-      type: issueType,
+      type: IssueType,
       args: {
         status: { type: GraphQLString },
         ownerId: { type: GraphQLID },
@@ -68,7 +103,7 @@ const RootMutation = new GraphQLObjectType({
       }
     },
     addOwner: {
-      type: ownerType,
+      type: OwnerType,
       args: {
         owner: { type: GraphQLString }
       },
