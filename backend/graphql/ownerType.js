@@ -10,7 +10,7 @@ const OwnerType = new GraphQLObjectType({
   name: 'Owner',
   fields: () => ({
     id: { type: GraphQLID },
-    owner: { type: GraphQLString },
+    name: { type: GraphQLString },
     issues: {
       type: new GraphQLList(IssueType),
       resolve(parent, args) {
