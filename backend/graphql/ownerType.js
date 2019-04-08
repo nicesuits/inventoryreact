@@ -14,7 +14,7 @@ const OwnerType = new GraphQLObjectType({
     issues: {
       type: new GraphQLList(IssueType),
       resolve(parent, args) {
-        //
+        return 'hello world';
       }
     }
   })

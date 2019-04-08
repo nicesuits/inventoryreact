@@ -15,6 +15,7 @@ const IssueType = new GraphQLObjectType({
       type: OwnerType,
       resolve(parent, args) {
         // return_.find(authors, { id: parent.authorId})
+        return 'hello world';
       }
     },
     created: { type: GraphQLString },
