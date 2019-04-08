@@ -1,4 +1,5 @@
 const koa = require('koa');
+const cors = require('@koa/cors');
 const mount = require('koa-mount');
 const graphqlHTTP = require('koa-graphql');
 const schema = require('./schema/schema');
@@ -9,7 +10,8 @@ initDB();
 
 const app = new koa();
 
-app.listen(9000);
+app.listen(4000);
+app.use(cors());
 app.use(
   mount(
     '/graphql',
