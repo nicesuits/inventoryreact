@@ -3,7 +3,9 @@
   "version": "0.0.1",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "seed_issues": "mongoimport --db issuetracker --collection issues --file db/ssues.json --jsonArray",
+    "seed_owners": "mongoimport --db issuetracker --collection owners --file db/owners.json --jsonArray"
   },
   "license": "MIT",
   "dependencies": {
