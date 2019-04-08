@@ -20,8 +20,7 @@ const IssueType = new GraphQLObjectType({
     owner: {
       type: OwnerType,
       resolve(parent, args) {
-        // return_.find(authors, { id: parent.authorId})
-        return 'hello world';
+        return Owner.findById(parent.ownerId);
       }
     },
     created: { type: GraphQLString },
@@ -39,7 +38,7 @@ const OwnerType = new GraphQLObjectType({
     issues: {
       type: new GraphQLList(IssueType),
       resolve(parent, args) {
-        return 'hello world';
+        return Issue.find({ ownerId: parent.ownerId });
       }
     }
   })
