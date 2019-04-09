@@ -1,18 +1,21 @@
 {
   "name": "backend",
-  "version": "0.1.0",
-  "description": "",
-  "main": "nodemon server.js",
+  "version": "0.0.1",
+  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon server.js",
+    "mongo": "mongod --dbpath db/data",
+    "seed_issues": "mongoimport --db issuetracker --collection issues --file db/issues.json --jsonArray",
+    "seed_owners": "mongoimport --db issuetracker --collection owners --file db/owners.json --jsonArray"
   },
-  "keywords": [],
-  "author": "",
   "license": "MIT",
   "dependencies": {
-    "body-parser": "^1.18.3",
-    "express": "^4.16.4",
-    "mongodb": "^3.2.2"
+    "@koa/cors": "^2.2.3",
+    "graphql": "^14.2.1",
+    "koa": "^2.7.0",
+    "koa-graphql": "^0.8.0",
+    "koa-mount": "^4.0.0",
+    "mongoose": "^5.4.22"
   },
   "devDependencies": {
     "nodemon": "^1.18.10"

@@ -1,41 +1,28 @@
 import React, { Component } from 'react';
+import { gql } from 'apollo-boost';
+import { graphql } from 'react-apollo';
 
 import IssueFilter from './IssueFilter';
 import IssueAdd from './IssueAdd';
 import IssueTable from './IssueTable';
 
-const data = [
+const getIssuesQuery = gql`
   {
-    id: 1,
-    status: 'Open',
-    owner: 'Ravan',
-    created: new Date('2016-08-15'),
-    effort: 5,
-    completionDate: undefined,
-    title: 'Error in console when clicking Add'
-  },
-  {
-    id: 2,
-    status: 'Assigned',
-    owner: 'Eddie',
-    created: new Date('2016-08-16'),
-    effort: 14,
-    completionDate: new Date('2016-08-30'),
-    title: 'Missing bottom border on panel'
+    issues {
+      id
+      status
+      owner {
+        name
+      }
+      created
+      effort
+      completionDate
+      title
+    }
   }
-];
+`;
 
 class IssueList extends Component {
-  constructor() {
-    super();
-    this.state = { issues: [] };
-    this.createIssue = this.createIssue.bind(this);
-  }
-
-  componentDidMount() {
-    this.loadData();
-  }
-
   createIssue(newIssue) {
     const newIssues = this.state.issues.slice();
     newIssue.id = this.state.issues.length + 1;
@@ -44,7 +31,9 @@ class IssueList extends Component {
   }
 
   loadData() {
-    this.setState({ issues: data });
+    if (!this.props.data.loading) {
+      return <IssueTable issues={this.props.data.issues} />;
+    }
   }
 
   render() {
@@ -53,7 +42,7 @@ class IssueList extends Component {
         <h1>Inventory Table</h1>
         <IssueFilter />
         <hr />
-        <IssueTable issues={this.state.issues} />
+        {this.loadData()}
         <hr />
         <IssueAdd createIssue={this.createIssue} />
       </div>
@@ -61,4 +50,4 @@ class IssueList extends Component {
   }
 }
 
-export default IssueList;
+export default graphql(getIssuesQuery)(IssueList);
