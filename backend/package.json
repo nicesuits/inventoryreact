@@ -4,6 +4,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon server.js",
+    "mongo": "mongod --dbpath db/data",
     "seed_issues": "mongoimport --db issuetracker --collection issues --file db/issues.json --jsonArray",
     "seed_owners": "mongoimport --db issuetracker --collection owners --file db/owners.json --jsonArray"
   },
