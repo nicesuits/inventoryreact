@@ -90,7 +90,7 @@ const RootMutation = new GraphQLObjectType({
         title: { type: GraphQLString }
       },
       resolve(parent, args) {
-        const issue = new Owner({
+        const issue = new Issue({
           status: args.status,
           ownerId: args.ownerId,
           created: args.created,
