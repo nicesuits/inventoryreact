@@ -23,16 +23,6 @@ const getIssuesQuery = gql`
 `;
 
 class IssueList extends Component {
-  constructor() {
-    super();
-    this.state = { issues: [] };
-    this.createIssue = this.createIssue.bind(this);
-  }
-
-  componentDidMount() {
-    this.loadData();
-  }
-
   createIssue(newIssue) {
     const newIssues = this.state.issues.slice();
     newIssue.id = this.state.issues.length + 1;
@@ -41,7 +31,9 @@ class IssueList extends Component {
   }
 
   loadData() {
-    // this.setState({ issues: this.props.data });
+    if (!this.props.data.loading) {
+      return <IssueTable issues={this.props.data.issues} />;
+    }
   }
 
   render() {
@@ -50,7 +42,7 @@ class IssueList extends Component {
         <h1>Inventory Table</h1>
         <IssueFilter />
         <hr />
-        <IssueTable issues={this.state.issues} />
+        {this.loadData()}
         <hr />
         <IssueAdd createIssue={this.createIssue} />
       </div>
