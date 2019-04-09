@@ -1,8 +1,26 @@
 import React, { Component } from 'react';
+import { gql } from 'apollo-boost';
+import { graphql } from 'react-apollo';
 
 import IssueFilter from './IssueFilter';
 import IssueAdd from './IssueAdd';
 import IssueTable from './IssueTable';
+
+const getIssuesQuery = gql`
+  {
+    issues {
+      id
+      status
+      owner {
+        name
+      }
+      created
+      effort
+      completionDate
+      title
+    }
+  }
+`;
 
 class IssueList extends Component {
   constructor() {
@@ -23,7 +41,7 @@ class IssueList extends Component {
   }
 
   loadData() {
-    this.setState({ issues: data });
+    // this.setState({ issues: this.props.data });
   }
 
   render() {
@@ -40,4 +58,4 @@ class IssueList extends Component {
   }
 }
 
-export default IssueList;
+export default graphql(getIssuesQuery)(IssueList);
